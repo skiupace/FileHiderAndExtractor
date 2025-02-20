@@ -18,7 +18,7 @@ namespace HideFileInsideAnother.src.BL {
 
             // Everything from the lastDotIndex to the end is considered the extension.
             int extLength = destFileBytes.Length - lastDotIndex;
-            string extension = Encoding.ASCII.GetString(destFileBytes, lastDotIndex, extLength);
+            string extension = Encoding.UTF8.GetString(destFileBytes, lastDotIndex, extLength);
 
             // The hidden file data is the bytes just before the extension.
             int hiddenFileStart = destFileBytes.Length - (hiddenFileDataLength + extLength);
@@ -31,8 +31,8 @@ namespace HideFileInsideAnother.src.BL {
             byte[] originalFileBytes = new byte[hiddenFileDataLength];
             Array.Copy(destFileBytes, hiddenFileStart, originalFileBytes, 0, hiddenFileDataLength);
 
-            Array.Clear(destFileBytes, hiddenFileStart, hiddenFileDataLength);
-            Array.Resize(ref destFileBytes, destFileBytes.Length - hiddenFileDataLength);
+            Array.Clear(destFileBytes, hiddenFileStart, hiddenFileDataLength + extLength);
+            Array.Resize(ref destFileBytes, destFileBytes.Length - (hiddenFileDataLength + extLength));
             File.WriteAllBytes(destFilePath, destFileBytes);
 
             // Save the extracted file with the retrieved extension appended to the file name.

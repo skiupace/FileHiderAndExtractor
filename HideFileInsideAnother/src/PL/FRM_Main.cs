@@ -57,6 +57,9 @@ namespace HideFileInsideAnother.src.PL {
                     sourceFilePath = openFile.FileName;
                     sourceFileBytes = File.ReadAllBytes(openFile.FileName);
                     fileLength_TextBox.Text = sourceFileBytes.Length.ToString();
+                } else {
+                    MessageBox.Show("You should choose a source file to upload", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
             } catch (Exception ex) {
                 MessageBox.Show($"Error: {ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -69,15 +72,12 @@ namespace HideFileInsideAnother.src.PL {
             openFile.Filter = "All Files|*.*";
 
             try {
-                DialogResult result = openFile.ShowDialog();
-                if (result == DialogResult.OK) {
-                    if (!int.TryParse(fileLength_TextBox.Text, out int fileLength)) {
-                        MessageBox.Show("Can't input a text inside file length field!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
+                if (!int.TryParse(fileLength_TextBox.Text, out int fileLength))
+                    throw new Exception("You can't ignore or enter a text inside file length field!");
 
+                DialogResult result = openFile.ShowDialog();
+                if (result == DialogResult.OK)
                     FileHider.HideFile(openFile.FileName, sourceFilePath, fileLength);
-                }
             } catch (Exception ex) {
                 MessageBox.Show($"Error: {ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
